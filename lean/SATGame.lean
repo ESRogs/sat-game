@@ -2,83 +2,54 @@ import SATGame.Boolean.Literal
 import SATGame.CNF.Clause
 import SATGame.CNF.Formula
 import SATGame.CNF.Satisfiability
-import SATGame.Util.List
-import SATGame.FormulaOps.FormulaExt
 import SATGame.FormulaOps.FormulaOps
-import SATGame.FormulaOps.ValidSequences
-import SATGame.FormulaOps.Termination.Main
-import SATGame.FormulaOps.Termination.SetVariable
-import SATGame.FormulaOps.Termination.RemoveClause
-import SATGame.FormulaOps.Termination.Nonterminal
-import SATGame.FormulaOps.Termination.Helpers
-import SATGame.FormulaOps.Termination.Helpers.SetVariableHelpers
 import SATGame.FormulaOps.SatisfiabilityPreservation
 import SATGame.Game.Basic
 import SATGame.Game.Correctness.StrategyExistence
-import SATGame.Game.Correctness.PositionEvaluation
 import SATGame.Game.Correctness.AffirmativeAdvantage
+import SATGame.Game.Correctness.PositionEvaluation
+import SATGame.FormulaOps.Termination.Helpers
+import SATGame.FormulaOps.Termination.Helpers.SetVariableHelpers
+import SATGame.FormulaOps.Termination.Nonterminal
+import SATGame.FormulaOps.Termination.RemoveClause
+import SATGame.FormulaOps.Termination.SetVariable
+import SATGame.FormulaOps.Termination.Main
+import SATGame.Examples
 
 /-!
 # SAT Game Library
 
-🎉 **COMPLETE FORMAL VERIFICATION** 🎉
+Formal verification of termination and correctness for the two-player SAT Game.
 
-## Core Achievement: Affirmative Advantage Proven
+## Current Results
 
-**MAIN THEOREM**: `satisfiable_implies_affirmative_victory`
+### Mathematical Foundations (FormulaOps)
+- **Termination**: Formula operation sequences always terminate (see `FormulaOps/Termination/Main`)
+- **Preservation Properties**: Mathematical preservation of satisfiability under operations (see `FormulaOps/SatisfiabilityPreservation.lean`)
+- **Nonterminal Properties**: Fundamental properties of formulas where operations can continue (see `FormulaOps/Termination/Nonterminal.lean`)
 
-From any satisfiable Boolean formula, there exists an Affirmative strategy that
-guarantees reaching victory (empty formula) regardless of Negative's responses.
+### Game Theory (Game)
+- **Strategy Existence**: Players with winning positions have preserving moves (see `Game/Correctness/StrategyExistence.lean`)
+- **Position Evaluation**: Losing positions remain losing under valid play (see `Game/Correctness/PositionEvaluation.lean`)
+- **Affirmative Advantage**: Affirmative can win from any satisfiable formula (see `Game/Correctness/AffirmativeAdvantage.lean`)
 
-### Complete Mathematical Framework
+## Development Roadmap
+See `ROADMAP.md` for the complete strategy toward proving "the right side wins under perfect play."
 
-#### Boolean Logic Foundation
-- `Boolean.Literal`: Positive/negative variable literals
-- `CNF.Clause`: Disjunctions of literals
-- `CNF.Formula`: Conjunctions of clauses
-- `CNF.Satisfiability`: Satisfiability definitions and theorems
+## Core Modules
 
-### Formula Operations Framework
-- `FormulaOps.FormulaExt`: Extended formula properties (terminal predicates, literal counts)
-- `FormulaOps.FormulaOps`: Core operations (setVariable, removeClause)
-- `FormulaOps.ValidSequences`: Valid sequences of operations
+### Mathematical Foundation
+- `Boolean/`, `CNF/`: Basic types for literals, clauses, formulas, and satisfiability
+- `FormulaOps/`: Formula operation sequences and their mathematical properties
+  - `FormulaOps.FormulaOps`: Variable assignment and clause removal operations
+  - `FormulaOps.Termination/`: Proofs that operation sequences terminate
+  - `FormulaOps.SatisfiabilityPreservation`: Mathematical preservation properties
 
-#### Formula Operations Framework
-- `FormulaOps.FormulaExt`: Extended formula properties (terminal predicates, literal counts)
-- `FormulaOps.FormulaOps`: Core operations (setVariable, removeClause)
-- `FormulaOps.ValidSequences`: Valid sequences of operations
+### Game Layer
+- `Game/`: Strategic game concepts built on formula operations
+  - `Game.Basic`: Players, winning conditions, and round structures
+  - `Game.Correctness/`: Game-theoretic interpretations and strategic analysis
 
-#### Mathematical Properties
-- `FormulaOps.Termination.*`: Complete termination proofs (all games end)
-- `FormulaOps.SatisfiabilityPreservation`: Preservation properties under operations
-
-#### Game Infrastructure
-- `Game.Basic`: Strategic game concepts built on formula operations
-
-#### Strategic Correctness
-- `Game.Correctness.StrategyExistence`: Players with winning positions have preserving moves
-- `Game.Correctness.PositionEvaluation`: Losing positions remain losing under valid play
-- `Game.Correctness.AffirmativeAdvantage`: **CORE RESULT** - Affirmative wins from satisfiable formulas
-
-#### Utilities
-- `Util.List`: Helper functions and lemmas for list operations
-
-## Verified Results: Complete SAT Game Correctness
-
-1. **Termination Guarantee**: All formula operation sequences terminate in finite steps ✅
-2. **Satisfiability Preservation**: Operations preserve crucial satisfiability properties ✅
-3. **Strategy Existence**: Players in winning positions have preserving moves ✅
-4. **Position Stability**: Players in losing positions cannot escape ✅
-5. **🏆 AFFIRMATIVE ADVANTAGE**: Constructive proof that Affirmative can win from any satisfiable formula ✅
-
-## Mathematical Significance
-
-This represents a **complete formal verification** in Lean 4 that:
-- **Affirmative has a winning strategy** from any satisfiable Boolean formula
-- **The strategy is constructive** (explicitly constructed via `assignment_to_strategy`)
-- **The proof handles all edge cases** including Negative's optimal responses
-- **Zero `sorry`s** - every step is rigorously proven
-
-The SAT Game now has a **mathematically verified foundation** for neural network
-training and SAT solver enhancement research.
+### Examples and Verification
+- `Examples`: Demonstrations of formula operations and game sequences
 -/
