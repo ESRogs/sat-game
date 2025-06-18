@@ -1,0 +1,7 @@
+name = "sat-game"
+version = "0.1.0"
+author = "Eric S. Rogstad"
+defaultTargets = ["SATGame"]
+
+[[lean_lib]]
+name = "SATGame"
