@@ -2,21 +2,19 @@ import SATGame.Boolean.Literal
 import SATGame.CNF.Clause
 import SATGame.CNF.Formula
 import SATGame.CNF.Satisfiability
-import SATGame.Util.List
-import SATGame.FormulaOps.FormulaExt
 import SATGame.FormulaOps.FormulaOps
-import SATGame.FormulaOps.ValidSequences
-import SATGame.FormulaOps.Termination.Main
-import SATGame.FormulaOps.Termination.SetVariable
-import SATGame.FormulaOps.Termination.RemoveClause
-import SATGame.FormulaOps.Termination.Nonterminal
-import SATGame.FormulaOps.Termination.Helpers
-import SATGame.FormulaOps.Termination.Helpers.SetVariableHelpers
 import SATGame.FormulaOps.SatisfiabilityPreservation
 import SATGame.Game.Basic
 import SATGame.Game.Correctness.StrategyExistence
-import SATGame.Game.Correctness.PositionEvaluation
 import SATGame.Game.Correctness.AffirmativeAdvantage
+import SATGame.Game.Correctness.PositionEvaluation
+import SATGame.FormulaOps.Termination.Helpers
+import SATGame.FormulaOps.Termination.Helpers.SetVariableHelpers
+import SATGame.FormulaOps.Termination.Nonterminal
+import SATGame.FormulaOps.Termination.RemoveClause
+import SATGame.FormulaOps.Termination.SetVariable
+import SATGame.FormulaOps.Termination.Main
+import SATGame.Examples
 
 /-!
 # SAT Game Library
