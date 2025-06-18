@@ -1,0 +1,12 @@
+name = "sat-game"
+version = "0.1.0"
+author = "Eric S. Rogstad"
+defaultTargets = ["SATGame"]
+
+[[require]]
+name = "mathlib"
+scope = "leanprover-community"
+rev = "v4.20.0"
+
+[[lean_lib]]
+name = "SATGame"
