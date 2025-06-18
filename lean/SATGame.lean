@@ -21,10 +21,6 @@ This module imports the fundamental mathematical types for the SAT Game:
 - `CNF.Clause`: Disjunctions of literals
 - `CNF.Formula`: Conjunctions of clauses
 - `CNF.Satisfiability`: Satisfiability definitions and theorems
-- `Boolean.Literal`: Positive/negative variable literals
-- `CNF.Clause`: Disjunctions of literals
-- `CNF.Formula`: Conjunctions of clauses (CNF formulas)
-- `CNF.Satisfiability`: Satisfiability definitions and properties
 
 ### Formula Operations Framework
 - `FormulaOps.FormulaExt`: Extended formula properties (terminal predicates, literal counts)
