@@ -3,6 +3,9 @@ import SATGame.CNF.Clause
 import SATGame.CNF.Formula
 import SATGame.CNF.Satisfiability
 import SATGame.Util.List
+import SATGame.FormulaOps.FormulaExt
+import SATGame.FormulaOps.FormulaOps
+import SATGame.FormulaOps.ValidSequences
 
 /-!
 # SAT Game Library
@@ -13,5 +16,14 @@ Core mathematical types for Boolean satisfiability and CNF formulas.
 - `CNF.Clause`: Disjunctions of literals
 - `CNF.Formula`: Conjunctions of clauses
 - `CNF.Satisfiability`: Satisfiability definitions and theorems
-- `Util.List`: List operation helpers
+
+### Formula Operations Framework
+- `FormulaOps.FormulaExt`: Extended formula properties (terminal predicates, literal counts)
+- `FormulaOps.FormulaOps`: Core operations (setVariable, removeClause)
+- `FormulaOps.ValidSequences`: Valid sequences of operations
+
+### Utilities
+- `Util.List`: Helper functions and lemmas for list operations
+
+These components provide the mathematical foundation for formula operations and game logic.
 -/
