@@ -16,11 +16,14 @@ import SATGame.FormulaOps.SatisfiabilityPreservation
 import SATGame.Game.Basic
 import SATGame.Game.Correctness.StrategyExistence
 import SATGame.Game.Correctness.PositionEvaluation
+import SATGame.Game.Correctness.AffirmativeAdvantage
 
 /-!
 # SAT Game Library
 
 Core mathematical types for Boolean satisfiability and CNF formulas.
+
+**Main Theorem**: `satisfiable_implies_affirmative_victory`
 
 ## Infrastructure
 - **Boolean Logic**: Literals, clauses, formulas, and satisfiability
@@ -34,4 +37,5 @@ Core mathematical types for Boolean satisfiability and CNF formulas.
   - `setVariable` preserves unsatisfiability
   - `removeClause` preserves satisfiability
 - **Strategic Correctness**: Losing positions remain losing under valid play
+- **Affirmative Advantage**: Constructive proof that Affirmative wins from satisfiable formulas
 -/
