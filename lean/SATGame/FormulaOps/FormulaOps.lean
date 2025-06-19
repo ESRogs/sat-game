@@ -3,7 +3,14 @@ import SATGame.FormulaOps.FormulaExt
 /-!
 # Formula Operations
 
-Defines the FormulaOp type for formula transformations (SetVariable, RemoveClause).
+This module defines the FormulaOp type representing formula transformations.
+
+## Operations
+
+1. **SetVariable**: Assign a variable to true/false
+2. **RemoveClause**: Remove a clause by index
+
+Both operations are applied to formulas through `Formula.applyOp`.
 -/
 
 /-- Formula transformation operations -/
