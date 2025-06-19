@@ -14,6 +14,8 @@ import SATGame.FormulaOps.Termination.Helpers
 import SATGame.FormulaOps.Termination.Helpers.SetVariableHelpers
 import SATGame.FormulaOps.SatisfiabilityPreservation
 import SATGame.Game.Basic
+import SATGame.Game.Correctness.StrategyExistence
+import SATGame.Game.Correctness.PositionEvaluation
 
 /-!
 # SAT Game Library
@@ -31,4 +33,5 @@ Core mathematical types for Boolean satisfiability and CNF formulas.
 - **Satisfiability Preservation**:
   - `setVariable` preserves unsatisfiability
   - `removeClause` preserves satisfiability
+- **Strategic Correctness**: Losing positions remain losing under valid play
 -/
