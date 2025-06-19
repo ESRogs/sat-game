@@ -13,6 +13,7 @@ import SATGame.FormulaOps.Termination.Nonterminal
 import SATGame.FormulaOps.Termination.Helpers
 import SATGame.FormulaOps.Termination.Helpers.SetVariableHelpers
 import SATGame.FormulaOps.SatisfiabilityPreservation
+import SATGame.Game.Basic
 
 /-!
 # SAT Game Library
@@ -22,6 +23,7 @@ Core mathematical types for Boolean satisfiability and CNF formulas.
 ## Infrastructure
 - **Boolean Logic**: Literals, clauses, formulas, and satisfiability
 - **Formula Operations**: Variable assignment, clause removal, and operation sequences
+- **Game Framework**: Strategic game concepts, players, and winning conditions
 - **Utilities**: List helpers and lemmas
 
 ## Proofs
