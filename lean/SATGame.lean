@@ -14,6 +14,8 @@ import SATGame.FormulaOps.Termination.Helpers
 import SATGame.FormulaOps.Termination.Helpers.SetVariableHelpers
 import SATGame.FormulaOps.SatisfiabilityPreservation
 import SATGame.Game.Basic
+import SATGame.Game.Correctness.StrategyExistence
+import SATGame.Game.Correctness.PositionEvaluation
 
 /-!
 # SAT Game Library
@@ -23,11 +25,14 @@ Core mathematical types for Boolean satisfiability and CNF formulas with strateg
 ## Components
 - **Boolean Logic**: Literals, clauses, formulas, and satisfiability
 - **Formula Operations**: Variable assignment, clause removal, termination proofs, and satisfiability preservation
-- **Game Infrastructure**: Players, strategies, winning conditions, and game execution
+- **Game Infrastructure**: Players, strategies, winning conditions, and correctness properties
 - **Utilities**: List helpers and lemmas
 
 ## Key Results
 1. **Termination**: All formula operation sequences terminate in finite steps
 2. **Satisfiability Preservation**: Operations preserve key satisfiability properties
-3. **Strategic Framework**: Foundation for proving correctness under perfect play
+3. **Strategy Existence**: Winning positions always have preserving moves
+4. **Position Stability**: Losing positions remain losing under valid play
+
+These establish game correctness: initial position determines outcome under perfect play.
 -/
