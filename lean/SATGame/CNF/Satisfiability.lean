@@ -87,33 +87,38 @@ theorem assignment_extension_preserves_unrelated_literals {Var : Type} [Decidabl
     simp at h_unrelated
     simp [h_unrelated]
 
--- /-- If a literal becomes true under variable assignment, it's satisfied by the extended assignment -/
--- theorem becomesTrueUnder_implies_satisfiedBy_extension {Var : Type} [DecidableEq Var]
---     (lit : Literal Var) (var : Var) (value : Bool) (α : Assignment Var) :
---     lit.becomesTrueUnder var value = true →
---     lit.satisfiedByAssignment (fun v => if v = var then value else α v) = true := by
---   intro h_becomes_true
---   unfold Literal.satisfiedByAssignment
---   unfold Literal.becomesTrueUnder at h_becomes_true
---   -- h_becomes_true: lit.containsVariable var && lit.eval value = true
---   -- This means both lit.containsVariable var = true and lit.eval value = true
---   simp only [Bool.and_eq_true] at h_becomes_true
---   have h_contains := h_becomes_true.1
---   have h_eval := h_becomes_true.2
---   cases lit with
---   | pos v =>
---     simp only [Literal.eval] at h_eval ⊢
---     -- h_contains: (pos v).containsVariable var = true
---     -- This means v = var
---     unfold Literal.containsVariable Literal.getVariable at h_contains
---     simp at h_contains
---     rw [if_pos h_contains]
---     exact h_eval
---   | neg v =>
---     simp only [Literal.eval] at h_eval ⊢
---     -- h_contains: (neg v).containsVariable var = true
---     -- This means v = var
---     unfold Literal.containsVariable Literal.getVariable at h_contains
---     simp at h_contains
---     rw [if_pos h_contains]
---     exact h_eval
+/-- If a literal becomes true under variable assignment, it's satisfied by the extended assignment -/
+theorem becomesTrueUnder_implies_satisfiedBy_extension {Var : Type} [DecidableEq Var]
+    (lit : Literal Var) (var : Var) (value : Bool) (α : Assignment Var) :
+    lit.becomesTrueUnder var value = true →
+    lit.satisfiedByAssignment (fun v => if v = var then value else α v) = true := by
+  intro h_becomes_true
+  unfold Literal.satisfiedByAssignment
+  unfold Literal.becomesTrueUnder at h_becomes_true
+  -- h_becomes_true: lit.containsVariable var && lit.eval value = true
+  -- This means both lit.containsVariable var = true and lit.eval value = true
+  simp only [Bool.and_eq_true] at h_becomes_true
+  obtain ⟨h_contains, h_eval_true⟩ := h_becomes_true
+  -- Since lit contains var, lit.getVariable = var
+  unfold Literal.containsVariable at h_contains
+  simp at h_contains
+  -- Now we know lit.getVariable = var and lit.eval value = true
+  cases lit with
+  | pos v =>
+    simp [Literal.getVariable] at h_contains
+    subst h_contains
+    -- The literal is (pos v), and we need to show it's satisfied by the extended assignment
+    -- Since v = var, the extended assignment gives (α v) = value
+    simp
+    unfold Literal.eval at h_eval_true
+    exact h_eval_true
+  | neg v =>
+    simp [Literal.getVariable] at h_contains
+    subst h_contains
+    -- The literal is (neg v), and we need to show it's satisfied by the extended assignment
+    -- Since v = var, the extended assignment gives !(α v) = !value
+    simp
+    unfold Literal.eval at h_eval_true
+    -- h_eval_true: !value = true, which means value = false
+    simp at h_eval_true
+    exact h_eval_true

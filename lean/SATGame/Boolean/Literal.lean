@@ -30,9 +30,9 @@ def Literal.getVariable {Var : Type} (lit : Literal Var) : Var :=
 def Literal.containsVariable {Var : Type} [DecidableEq Var] (lit : Literal Var) (var : Var) : Bool :=
   lit.getVariable == var
 
--- /-- Check if a literal becomes true when a specific variable is assigned a value -/
--- def Literal.becomesTrueUnder {Var : Type} [DecidableEq Var] (lit : Literal Var) (var : Var) (value : Bool) : Bool :=
---   lit.containsVariable var && lit.eval value
+/-- Check if a literal becomes true when a specific variable is assigned a value -/
+def Literal.becomesTrueUnder {Var : Type} [DecidableEq Var] (lit : Literal Var) (var : Var) (value : Bool) : Bool :=
+  lit.containsVariable var && lit.eval value
 
 /-- A literal always contains its own variable -/
 theorem Literal.contains_own_variable {Var : Type} [DecidableEq Var] (lit : Literal Var) :
