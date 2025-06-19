@@ -27,6 +27,11 @@ This module imports the fundamental mathematical types for the SAT Game:
 - `FormulaOps.FormulaOps`: Core operations (setVariable, removeClause)
 - `FormulaOps.ValidSequences`: Valid sequences of operations
 
+### Formula Operations Framework
+- `FormulaOps.FormulaExt`: Extended formula properties (terminal predicates, literal counts)
+- `FormulaOps.FormulaOps`: Core operations (setVariable, removeClause)
+- `FormulaOps.ValidSequences`: Valid sequences of operations
+
 ### Utilities
 - `Util.List`: Helper functions and lemmas for list operations
 
