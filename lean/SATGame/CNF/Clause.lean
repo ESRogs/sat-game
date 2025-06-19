@@ -31,6 +31,7 @@ theorem literal_var_implies_clause_var {Var : Type} [DecidableEq Var]
   rw [List.any_eq_true]
   exact ⟨lit, h_lit_in, h_lit_contains⟩
 
-/-- Check if a clause is satisfied by assigning a specific variable to a value -/
+/-- Check if assigning a specific variable to a value would be sufficient to satisfy this clause.
+    Returns true if the clause contains a literal with that variable that would be satisfied by the assignment. -/
 def Clause.satisfiedBy {Var : Type} [DecidableEq Var] (clause : Clause Var) (var : Var) (value : Bool) : Bool :=
   clause.any fun lit => lit.containsVariable var && lit.eval value

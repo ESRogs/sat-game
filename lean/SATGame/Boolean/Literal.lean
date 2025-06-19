@@ -13,7 +13,8 @@ inductive Literal (Var : Type) where
   | neg : Var → Literal Var  -- negative literal (e.g., ¬x)
   deriving DecidableEq
 
-/-- Evaluate a literal under a boolean assignment to its variable -/
+/-- Evaluate a literal when its variable is assigned the given boolean value.
+    Returns true if the literal would be satisfied by this assignment. -/
 def Literal.eval {Var : Type} (lit : Literal Var) (value : Bool) : Bool :=
   match lit with
   | Literal.pos _ => value     -- positive literal x is true when x := true
