@@ -3,6 +3,9 @@ import SATGame.CNF.Clause
 import SATGame.CNF.Formula
 import SATGame.CNF.Satisfiability
 import SATGame.Util.List
+import SATGame.FormulaOps.FormulaExt
+import SATGame.FormulaOps.FormulaOps
+import SATGame.FormulaOps.ValidSequences
 
 /-!
 # SAT Game Library
@@ -19,8 +22,13 @@ This module imports the fundamental mathematical types for the SAT Game:
 - `CNF.Formula`: Conjunctions of clauses (CNF formulas)
 - `CNF.Satisfiability`: Satisfiability definitions and properties
 
+### Formula Operations Framework
+- `FormulaOps.FormulaExt`: Extended formula properties (terminal predicates, literal counts)
+- `FormulaOps.FormulaOps`: Core operations (setVariable, removeClause)
+- `FormulaOps.ValidSequences`: Valid sequences of operations
+
 ### Utilities
 - `Util.List`: Helper functions and lemmas for list operations
 
-These types form the mathematical foundation for all formula operations and game logic.
+These components provide the mathematical foundation for formula operations and game logic.
 -/
