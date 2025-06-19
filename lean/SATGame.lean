@@ -12,15 +12,21 @@ import SATGame.FormulaOps.Termination.RemoveClause
 import SATGame.FormulaOps.Termination.Nonterminal
 import SATGame.FormulaOps.Termination.Helpers
 import SATGame.FormulaOps.Termination.Helpers.SetVariableHelpers
+import SATGame.FormulaOps.SatisfiabilityPreservation
 
 /-!
 # SAT Game Library
 
 Core mathematical types for Boolean satisfiability and CNF formulas.
 
-## Components
+## Infrastructure
 - **Boolean Logic**: Literals, clauses, formulas, and satisfiability
 - **Formula Operations**: Variable assignment, clause removal, and operation sequences
-- **Termination**: Proofs that formula operation sequences terminate
 - **Utilities**: List helpers and lemmas
+
+## Proofs
+- **Termination**: Sequences of formula operations are guaranteed to terminate
+- **Satisfiability Preservation**:
+  - `setVariable` preserves unsatisfiability
+  - `removeClause` preserves satisfiability
 -/
