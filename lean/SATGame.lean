@@ -13,15 +13,16 @@ import SATGame.FormulaOps.Termination.Nonterminal
 import SATGame.FormulaOps.Termination.Helpers
 import SATGame.FormulaOps.Termination.Helpers.SetVariableHelpers
 import SATGame.FormulaOps.SatisfiabilityPreservation
+import SATGame.Game.Basic
 
 /-!
 # SAT Game Library
 
 Formal verification of termination and correctness for the two-player SAT Game.
 
-## Mathematical Foundation with Core Properties
+## Complete Mathematical Framework with Game Infrastructure
 
-This module imports the complete mathematical framework for formula operations:
+This module imports the full mathematical foundation plus game-theoretic concepts:
 
 ### Boolean Logic Foundation
 - `Boolean.Literal`: Literals with variables and boolean values
@@ -38,17 +39,23 @@ This module imports the complete mathematical framework for formula operations:
 - `FormulaOps.Termination.*`: Complete termination proofs (all games end)
 - `FormulaOps.SatisfiabilityPreservation`: Preservation properties under operations
 
+### Game Infrastructure
+- `Game.Basic`: Strategic game concepts built on formula operations
+  - Players (Affirmative seeks satisfiability, Negative seeks unsatisfiability)
+  - Strategies and winning conditions
+  - Game execution with AffirmativeStrategy type
+  - Round structures and valid game sequences
+
 ### Utilities
 - `Util.List`: Helper functions and lemmas for list operations
 
 ## Key Mathematical Results
 
 1. **Termination Guarantee**: All formula operation sequences terminate in finite steps
-2. **Satisfiability Preservation**: Operations preserve crucial satisfiability properties:
-   - Clause removal preserves satisfiability (satisfiable formulas stay satisfiable)
-   - Variable assignment preserves unsatisfiability (unsatisfiable formulas stay unsatisfiable)
-   - Strategy existence for winning positions
+2. **Satisfiability Preservation**: Operations preserve crucial satisfiability properties
+3. **Game Infrastructure**: Strategic framework connecting formula operations to game play
 
-These properties form the mathematical foundation proving that losing positions
-remain losing under valid play, establishing the correctness of game outcomes.
+The combination of mathematical properties and game infrastructure provides the
+foundation for proving strategic correctness - that the right side wins under
+perfect play in the SAT Game.
 -/
