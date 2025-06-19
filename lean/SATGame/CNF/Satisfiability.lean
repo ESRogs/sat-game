@@ -86,4 +86,3 @@ theorem assignment_extension_preserves_unrelated_literals {Var : Type} [Decidabl
     unfold Literal.containsVariable Literal.getVariable at h_unrelated
     simp at h_unrelated
     simp [h_unrelated]
-
