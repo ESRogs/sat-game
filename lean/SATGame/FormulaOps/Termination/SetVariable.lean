@@ -1,6 +1,4 @@
 import Mathlib.Data.List.Basic
-import Mathlib.Tactic.ByContra
-import Mathlib.Tactic.Push
 import SATGame.Boolean.Literal
 import SATGame.FormulaOps.FormulaExt
 import SATGame.FormulaOps.Termination.Helpers
