@@ -131,7 +131,8 @@ theorem nonterminal_contains_variable {Var : Type} [DecidableEq Var] (formula : 
   obtain ⟨literal, h_literal_in⟩ := h_literal_exists
 
   -- Step 5: Extract variable from literal
-  have h_literal_has_var : ∃ var, literal.containsVariable var = true := ⟨literal.getVariable, Literal.contains_own_variable literal⟩
+  have h_literal_has_var : ∃ var, literal.containsVariable var = true :=
+    ⟨literal.getVariable, literal.contains_own_variable⟩
   obtain ⟨var, h_var_in_literal⟩ := h_literal_has_var
 
   -- Step 6: Show clause contains the variable
