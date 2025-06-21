@@ -4,7 +4,7 @@ author = "Eric S. Rogstad"
 defaultTargets = ["SATGame"]
 
 [[require]]
-name = "mathlib"
+name = "batteries"
 scope = "leanprover-community"
 rev = "v4.20.0"
 

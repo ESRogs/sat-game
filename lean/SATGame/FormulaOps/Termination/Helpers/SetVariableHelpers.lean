@@ -1,6 +1,5 @@
-import Mathlib.Data.List.Basic
-import Mathlib.Tactic.ByContra
-import Mathlib.Tactic.Push
+import Batteries.Data.List.Basic
+import Batteries.Tactic.Basic
 import SATGame.Boolean.Literal
 import SATGame.FormulaOps.FormulaExt
 import SATGame.FormulaOps.Termination.Nonterminal
@@ -107,8 +106,9 @@ theorem filter_removes_element_strict {α : Type} (l : List α) (p : α → Bool
 
   have h_pos : 0 < (l.filter (fun a => ¬p a)).length := by
     by_contra h_not_pos
-    push_neg at h_not_pos
-    have h_zero : (l.filter (fun a => ¬p a)).length = 0 := Nat.eq_zero_of_le_zero h_not_pos
+    -- h_not_pos : ¬(0 < (l.filter (fun a => ¬p a)).length) means length ≤ 0
+    have h_le_zero : (l.filter (fun a => ¬p a)).length ≤ 0 := Nat.not_lt.mp h_not_pos
+    have h_zero : (l.filter (fun a => ¬p a)).length = 0 := Nat.eq_zero_of_le_zero h_le_zero
     have h_empty : l.filter (fun a => ¬p a) = [] := List.length_eq_zero_iff.mp h_zero
     rw [h_empty] at h_in_complement
     exact List.not_mem_nil h_in_complement
@@ -221,17 +221,13 @@ theorem setVariable_removes_variable {Var : Type} [DecidableEq Var]
   unfold Formula.setVariable at h_clause_in_result
   have h_exists : ∃ orig_clause, List.Mem orig_clause formula ∧ processClauseForVariableAssignment orig_clause var value = some clause := by
     exact List.mem_filterMap.mp h_clause_in_result
-  obtain ⟨orig_clause, h_orig_mem, h_process_result⟩ := h_exists
+  let ⟨orig_clause, h_orig_mem, h_process_result⟩ := h_exists
 
   -- Case analysis: did the original clause contain the variable?
-  by_cases h_contains : Clause.containsVariable orig_clause var = true
-  · -- Case 1: Original contained the variable
-    exact processed_clause_no_variable_when_original_contained orig_clause clause var value h_contains h_process_result
-  · -- Case 2: Original didn't contain the variable
-    have h_not_contains : Clause.containsVariable orig_clause var = false := by
-      by_contra h_contra
-      push_neg at h_contra
-      cases h_bool : Clause.containsVariable orig_clause var with
-      | true => exact h_contains h_bool
-      | false => exact h_contra h_bool
+  cases h_bool : Clause.containsVariable orig_clause var with
+  | true =>
+    -- Case 1: Original contained the variable
+    exact processed_clause_no_variable_when_original_contained orig_clause clause var value h_bool h_process_result
+  | false =>
+    -- Case 2: Original didn't contain the variable
     exact process_clause_when_no_variable orig_clause clause var value h_process_result

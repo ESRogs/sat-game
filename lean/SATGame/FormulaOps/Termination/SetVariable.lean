@@ -1,6 +1,5 @@
-import Mathlib.Data.List.Basic
-import Mathlib.Tactic.ByContra
-import Mathlib.Tactic.Push
+import Batteries.Data.List.Basic
+import Batteries.Tactic.Basic
 import SATGame.Boolean.Literal
 import SATGame.FormulaOps.FormulaExt
 import SATGame.FormulaOps.Termination.Helpers
@@ -94,8 +93,9 @@ theorem witness_clause_nonempty {Var : Type} [DecidableEq Var]
     clause.length > 0 := by
   have h_no_empty := nonterminal_implies_no_empty_clauses formula h_nonterminal
   by_contra h_not_pos
-  push_neg at h_not_pos
-  have h_zero_length : clause.length = 0 := Nat.eq_zero_of_le_zero h_not_pos
+  -- h_not_pos : ¬(clause.length > 0) means clause.length ≤ 0
+  have h_le_zero : clause.length ≤ 0 := Nat.not_lt.mp h_not_pos
+  have h_zero_length : clause.length = 0 := Nat.eq_zero_of_le_zero h_le_zero
   have h_empty : clause.isEmpty := by
     rw [List.length_eq_zero_iff] at h_zero_length
     rw [h_zero_length]; rfl

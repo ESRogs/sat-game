@@ -1,6 +1,5 @@
-import Mathlib.Data.List.Basic
-import Mathlib.Logic.Basic
-import Mathlib.Tactic.ByContra
+import Batteries.Data.List.Basic
+import Batteries.Tactic.Basic
 import SATGame.CNF.Formula
 import SATGame.FormulaOps.FormulaExt
 
@@ -92,12 +91,11 @@ theorem nonterminal_contains_variable {Var : Type} [DecidableEq Var] (formula : 
     | cons _ _ => simp
 
   -- Get the first clause (at index 0)
-  have h_clause_exists : ∃ (clause : Clause Var), List.Mem clause formula := by
-    use formula.get ⟨0, h_formula_length⟩
-    exact List.get_mem formula ⟨0, h_formula_length⟩
+  have h_clause_exists : ∃ (clause : Clause Var), List.Mem clause formula :=
+    ⟨formula.get ⟨0, h_formula_length⟩, List.get_mem formula ⟨0, h_formula_length⟩⟩
 
   -- Extract the clause and its membership proof
-  obtain ⟨clause, h_clause_in⟩ := h_clause_exists
+  let ⟨clause, h_clause_in⟩ := h_clause_exists
 
   -- Step 3: Show the clause is not empty
   have h_clause_nonempty : clause ≠ [] := by
@@ -124,15 +122,14 @@ theorem nonterminal_contains_variable {Var : Type} [DecidableEq Var] (formula : 
     | nil => contradiction
     | cons _ _ => simp
 
-  have h_literal_exists : ∃ (literal : Literal Var), List.Mem literal clause := by
-    use clause.get ⟨0, h_clause_length⟩
-    exact List.get_mem clause ⟨0, h_clause_length⟩
+  have h_literal_exists : ∃ (literal : Literal Var), List.Mem literal clause :=
+    ⟨clause.get ⟨0, h_clause_length⟩, List.get_mem clause ⟨0, h_clause_length⟩⟩
 
-  obtain ⟨literal, h_literal_in⟩ := h_literal_exists
+  let ⟨literal, h_literal_in⟩ := h_literal_exists
 
   -- Step 5: Extract variable from literal
   have h_literal_has_var : ∃ var, literal.containsVariable var = true := literal_contains_variable literal
-  obtain ⟨var, h_var_in_literal⟩ := h_literal_has_var
+  let ⟨var, h_var_in_literal⟩ := h_literal_has_var
 
   -- Step 6: Show clause contains the variable
   have h_clause_contains_var : clause.containsVariable var = true :=
