@@ -2,16 +2,38 @@ import SATGame.Boolean.Literal
 import SATGame.CNF.Clause
 import SATGame.CNF.Formula
 import SATGame.CNF.Satisfiability
-import SATGame.Util.List
+import SATGame.FormulaOps.FormulaOps
+import SATGame.FormulaOps.SatisfiabilityPreservation
+import SATGame.Game.Basic
+import SATGame.Game.Correctness.StrategyExistence
+import SATGame.Game.Correctness.AffirmativeAdvantage
+import SATGame.Game.Correctness.PositionEvaluation
+import SATGame.FormulaOps.Termination.Helpers
+import SATGame.FormulaOps.Termination.Helpers.SetVariableHelpers
+import SATGame.FormulaOps.Termination.Nonterminal
+import SATGame.FormulaOps.Termination.RemoveClause
+import SATGame.FormulaOps.Termination.SetVariable
+import SATGame.FormulaOps.Termination.Main
+import SATGame.Examples
 
 /-!
 # SAT Game Library
 
 Core mathematical types for Boolean satisfiability and CNF formulas.
 
-- `Boolean.Literal`: Positive/negative variable literals
-- `CNF.Clause`: Disjunctions of literals
-- `CNF.Formula`: Conjunctions of clauses
-- `CNF.Satisfiability`: Satisfiability definitions and theorems
-- `Util.List`: List operation helpers
+**Main Theorem**: `satisfiable_implies_affirmative_victory`
+
+## Infrastructure
+- **Boolean Logic**: Literals, clauses, formulas, and satisfiability
+- **Formula Operations**: Variable assignment, clause removal, and operation sequences
+- **Game Framework**: Strategic game concepts, players, and winning conditions
+- **Utilities**: List helpers and lemmas
+
+## Proofs
+- **Termination**: Sequences of formula operations are guaranteed to terminate
+- **Satisfiability Preservation**:
+  - `setVariable` preserves unsatisfiability
+  - `removeClause` preserves satisfiability
+- **Strategic Correctness**: Losing positions remain losing under valid play
+- **Affirmative Advantage**: Constructive proof that Affirmative wins from satisfiable formulas
 -/
