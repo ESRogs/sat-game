@@ -9,7 +9,7 @@ Includes predicates for formula states and termination metrics.
 
 
 /-- Process clause when setting variable: remove if satisfied, else filter literals -/
-def processClause {Var : Type} [DecidableEq Var] (clause : Clause Var) (var : Var) (value : Bool) : Option (Clause Var) :=
+def processClauseForVariableAssignment {Var : Type} [DecidableEq Var] (clause : Clause Var) (var : Var) (value : Bool) : Option (Clause Var) :=
   if clause.satisfiedBy var value then
     none
   else
@@ -17,7 +17,7 @@ def processClause {Var : Type} [DecidableEq Var] (clause : Clause Var) (var : Va
 
 /-- Set a variable to a value and simplify the formula accordingly -/
 def Formula.setVariable {Var : Type} [DecidableEq Var] (formula : Formula Var) (var : Var) (value : Bool) : Formula Var :=
-  formula.filterMap (processClause · var value)
+  formula.filterMap (processClauseForVariableAssignment · var value)
 
 /-- Remove the clause at the given index from the formula -/
 def Formula.removeClause {Var : Type} (formula : Formula Var) (index : Nat) : Formula Var :=
