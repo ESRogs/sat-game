@@ -1,6 +1,6 @@
-import Mathlib.Data.List.Basic
-import Mathlib.Logic.Basic
-import Mathlib.Tactic.ByContra
+import Batteries.Data.List.Basic
+import Batteries.Tactic.Init
+import Mathlib.Tactic.Use
 import SATGame.CNF.Formula
 import SATGame.FormulaOps.FormulaExt
 

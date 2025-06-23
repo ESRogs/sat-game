@@ -1,5 +1,5 @@
-import Mathlib.Data.List.Basic
-import Mathlib.Tactic.ByContra
+import Batteries.Data.List.Basic
+import Batteries.Tactic.Init
 import Mathlib.Tactic.Push
 import SATGame.Boolean.Literal
 import SATGame.FormulaOps.FormulaExt
@@ -108,7 +108,7 @@ theorem filter_removes_element_strict {α : Type} (l : List α) (p : α → Bool
   have h_pos : 0 < (l.filter (fun a => ¬p a)).length := by
     by_contra h_not_pos
     push_neg at h_not_pos
-    have h_zero : (l.filter (fun a => ¬p a)).length = 0 := Nat.eq_zero_of_le_zero h_not_pos
+    have h_zero : (l.filter (fun a => ¬p a)).length = 0 := Nat.eq_zero_of_le_zero (Nat.not_lt.mp h_not_pos)
     have h_empty : l.filter (fun a => ¬p a) = [] := List.length_eq_zero_iff.mp h_zero
     rw [h_empty] at h_in_complement
     exact List.not_mem_nil h_in_complement

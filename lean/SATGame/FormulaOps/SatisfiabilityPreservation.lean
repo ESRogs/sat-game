@@ -3,7 +3,8 @@ import SATGame.FormulaOps.FormulaExt
 import SATGame.FormulaOps.FormulaOps
 import SATGame.FormulaOps.ValidSequences
 import SATGame.FormulaOps.Termination.Nonterminal
-import Mathlib.Logic.Basic
+import Batteries.Tactic.Init
+import Mathlib.Tactic.SplitIfs
 
 /-!
 # Formula Operation Preservation Properties ✅ COMPLETE
