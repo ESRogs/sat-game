@@ -111,7 +111,12 @@ done < <(find . -name "*.lean" -type f ! -path "./.lake/*" -print0)
 # Check and fix trailing whitespace
 if grep -r '[[:space:]]$' --include="*.lean" . | grep -v '^\./.lake/' > /dev/null 2>&1; then
     echo "❌ Found trailing whitespace, fixing..."
-    find . -name "*.lean" -type f ! -path "./.lake/*" -exec sed -i '' 's/[[:space:]]*$//' {} +
+    # Cross-platform sed: macOS requires -i '', Linux requires -i
+    if [[ "$OSTYPE" == "darwin"* ]]; then
+        find . -name "*.lean" -type f ! -path "./.lake/*" -exec sed -i '' 's/[[:space:]]*$//' {} +
+    else
+        find . -name "*.lean" -type f ! -path "./.lake/*" -exec sed -i 's/[[:space:]]*$//' {} +
+    fi
     fixed_whitespace=true
 fi
 
