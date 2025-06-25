@@ -13,6 +13,7 @@ fixed_imports=false
 order_imports() {
     local file="$1"
     local tempfile=$(mktemp)
+    trap 'rm -f "$tempfile"' EXIT
 
     # Extract the import section (continuous imports from the start)
     local in_imports=true
@@ -90,10 +91,8 @@ order_imports() {
     # Check if imports were reordered
     if ! cmp -s "$file" "$tempfile"; then
         cp "$tempfile" "$file"
-        rm "$tempfile"
         return 1  # Indicates changes were made
     else
-        rm "$tempfile"
         return 0  # No changes
     fi
 }
