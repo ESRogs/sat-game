@@ -105,16 +105,16 @@ while IFS= read -r -d '' file; do
         echo "❌ File $file had imports reordered"
         fixed_imports=true
     fi
-done < <(find . -name "*.lean" -type f ! -path "./.lake/*" -print0)
+done < <(find . -name "*.lean" -type f ! -path "*/.lake/*" -print0)
 
 # Check and fix trailing whitespace
-if grep -r '[[:space:]]$' --include="*.lean" . | grep -v '^\./.lake/' > /dev/null 2>&1; then
+if grep -r '[[:space:]]$' --include="*.lean" . | grep -v '/.lake/' > /dev/null 2>&1; then
     echo "❌ Found trailing whitespace, fixing..."
     # Cross-platform sed: macOS requires -i '', Linux requires -i
     if [[ "$OSTYPE" == "darwin"* ]]; then
-        find . -name "*.lean" -type f ! -path "./.lake/*" -exec sed -i '' 's/[[:space:]]*$//' {} +
+        find . -name "*.lean" -type f ! -path "*/.lake/*" -exec sed -i '' 's/[[:space:]]*$//' {} +
     else
-        find . -name "*.lean" -type f ! -path "./.lake/*" -exec sed -i 's/[[:space:]]*$//' {} +
+        find . -name "*.lean" -type f ! -path "*/.lake/*" -exec sed -i 's/[[:space:]]*$//' {} +
     fi
     fixed_whitespace=true
 fi
@@ -126,7 +126,7 @@ while IFS= read -r -d '' file; do
         echo "" >> "$file"
         fixed_newlines=true
     fi
-done < <(find . -name "*.lean" -type f ! -path "./.lake/*" -print0)
+done < <(find . -name "*.lean" -type f ! -path "*/.lake/*" -print0)
 
 # Summary
 if [[ "$fixed_whitespace" == true ]] || [[ "$fixed_newlines" == true ]] || [[ "$fixed_imports" == true ]]; then
