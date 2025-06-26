@@ -1,6 +1,6 @@
-import SATGame.CNF.Formula
-import SATGame.CNF.Clause
 import SATGame.Boolean.Literal
+import SATGame.CNF.Clause
+import SATGame.CNF.Formula
 
 /-!
 # Satisfiability for CNF Formulas
