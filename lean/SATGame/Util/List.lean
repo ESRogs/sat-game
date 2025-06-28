@@ -176,6 +176,43 @@ theorem List.sum_map_eraseIdx_le {α : Type} (l : List α) (f : α → Nat) (ind
   · -- Invalid index: no change
     simp [List.eraseIdx_of_length_le (Nat.le_of_not_gt h_index)]
 
+-- If a list contains an element > 0, then the sum > 0
+theorem List.sum_pos (l : List Nat) (h : ∃ x ∈ l, x > 0) : l.sum > 0 := by
+  -- Use list induction on the structure
+  induction l with
+  | nil => 
+    -- Impossible case: x cannot be in empty list
+    let ⟨x, h_mem, h_pos⟩ := h
+    simp at h_mem
+  | cons head tail ih =>
+    -- Extract the witness: there exists an element x in head::tail with x > 0
+    let ⟨x, h_mem, h_pos⟩ := h
+    -- Case analysis: is x the head or in the tail?
+    by_cases h_eq : head = x
+    · -- Case: head is our positive element
+      subst h_eq
+      -- Sum = head + tail.sum = x + tail.sum > 0 since x > 0
+      simp [List.sum_cons]
+      exact Nat.add_pos_left h_pos tail.sum
+    · -- Case: x is in the tail
+      have h_mem_tail : x ∈ tail := by
+        rw [List.mem_cons] at h_mem
+        cases h_mem with
+        | inl h => exact absurd h.symm h_eq
+        | inr h => exact h
+      -- Apply induction hypothesis: tail.sum > 0
+      have ih_applied : tail.sum > 0 := ih ⟨x, h_mem_tail, h_pos⟩
+      -- Therefore head + tail.sum > head + 0 = head ≥ 0, so total > 0
+      simp [List.sum_cons]
+      exact Nat.add_pos_right head ih_applied
+
+-- If a list contains an element ≥ 1, then the sum > 0
+theorem List.sum_pos_of_mem_ge_one (l : List Nat) (h : ∃ x ∈ l, x ≥ 1) : l.sum > 0 := by
+  -- Convert ≥ 1 to > 0 and apply the previous theorem
+  let ⟨x, h_mem, h_ge_one⟩ := h
+  have h_pos : x > 0 := Nat.pos_of_ne_zero (Nat.ne_of_gt (Nat.succ_le_iff.mp h_ge_one))
+  exact List.sum_pos l ⟨x, h_mem, h_pos⟩
+
 -- Removing an element with positive contribution decreases the sum
 theorem sum_eraseIdx_lt {α : Type} (l : List α) (f : α → Nat) (index : Nat)
     (h_index : index < l.length)
