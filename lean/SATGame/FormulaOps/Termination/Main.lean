@@ -150,6 +150,39 @@ lemma iterateStrategy_one_step {Var : Type} [DecidableEq Var]
       | .Continue op _ => f.applyOp op := by
   simp [iterateStrategy]
 
+-- Key recursive equality: shifting iteration by one step
+lemma iterateStrategy_shift_equality {Var : Type} [DecidableEq Var] 
+    (f : Formula Var) (strategy : Strategy Var) (op : FormulaOp Var) 
+    (h_op_applicable : op.IsApplicable f) (n : Nat)
+    (h_strat : strategy f = .Continue op h_op_applicable) :
+    iterateStrategy f strategy (n + 1) = iterateStrategy (f.applyOp op) strategy n := by
+  -- Key insight: both sides follow the same recursive pattern after the first step
+  induction n with
+  | zero =>
+    -- Base case: n = 0
+    -- LHS: iterateStrategy f strategy 1 = (match strategy f with | Terminal => f | Continue op => f.applyOp op)
+    -- RHS: iterateStrategy (f.applyOp op) strategy 0 = f.applyOp op  
+    -- Since strategy f = Continue op, LHS = f.applyOp op = RHS
+    rw [iterateStrategy_one_step]
+    rw [h_strat]
+    simp [iterateStrategy]
+  | succ k ih =>
+    -- Inductive case: n = k + 1
+    -- Use the recursive definition of iterateStrategy directly
+    -- LHS: iterateStrategy f strategy (k + 2)
+    -- RHS: iterateStrategy (f.applyOp op) strategy (k + 1)
+    
+    -- Unfold LHS: iterateStrategy f strategy (k + 2) = apply strategy to (iterateStrategy f strategy (k + 1))
+    -- By IH: iterateStrategy f strategy (k + 1) = iterateStrategy (f.applyOp op) strategy k
+    -- So LHS = apply strategy to (iterateStrategy (f.applyOp op) strategy k)
+    
+    -- Unfold RHS: iterateStrategy (f.applyOp op) strategy (k + 1) = apply strategy to (iterateStrategy (f.applyOp op) strategy k)
+    
+    -- Therefore LHS = RHS
+    unfold iterateStrategy
+    -- After unfolding, both sides should be identical
+    rw [ih]
+
 -- Note: We're removing the complex shift lemma and using bounded iteration instead
 -- This eliminates the dependent type issues we were struggling with
 
@@ -166,19 +199,45 @@ lemma iterateStrategy_shift_step {Var : Type} [DecidableEq Var]
     (h_strat : strategy f = .Continue op h_op_applicable)
     (h_terminal : (iterateStrategy (f.applyOp op) strategy n).isTerminal = true) :
     (iterateStrategy f strategy (n + 1)).isTerminal = true := by
-  -- Core insight: iterateStrategy f strategy (n+1) unfolds to apply strategy to 
-  -- iterateStrategy f strategy n, then continue based on the result
+  -- Key insight: We need to show that iterating from f for n+1 steps is terminal
+  -- We know that iterating from (f.applyOp op) for n steps is terminal
+  -- The connection is through the recursive structure of iterateStrategy
   
-  -- But we know strategy f = Continue op _, so we want to show this equals
-  -- iterateStrategy (f.applyOp op) strategy n, which is terminal by hypothesis
+  -- First, let's understand what happens step by step:
+  -- iterateStrategy f strategy (n + 1) applies the strategy to the result of n steps
+  -- But the result after n steps from f should be the same as after n-1 steps from f.applyOp op
   
-  -- This is a complex recursive equality that requires careful handling
-  -- The core insight is that shifting the iteration sequence by one step
-  -- should preserve the termination property
-  
-  -- For now, we'll use the fact that this follows from the recursive structure
-  -- The detailed proof requires proving equality of recursive computations
-  sorry -- TODO: Complete the complex recursive equality proof
+  -- Use induction on n to establish the recursive connection
+  induction n with
+  | zero => 
+    -- Base case: n = 0
+    -- Goal: (iterateStrategy f strategy 1).isTerminal = true
+    -- Given: (iterateStrategy (f.applyOp op) strategy 0).isTerminal = true
+    -- Since iterateStrategy ... 0 = identity, we have: (f.applyOp op).isTerminal = true
+    
+    -- Simplify the hypothesis: iterateStrategy (f.applyOp op) strategy 0 = f.applyOp op
+    have h_identity : iterateStrategy (f.applyOp op) strategy 0 = f.applyOp op := by
+      simp [iterateStrategy]
+    rw [h_identity] at h_terminal
+    -- Now h_terminal : (f.applyOp op).isTerminal = true
+    
+    -- Show the goal using the one-step lemma
+    rw [iterateStrategy_one_step]
+    rw [h_strat]
+    -- Goal becomes: (f.applyOp op).isTerminal = true
+    exact h_terminal
+    
+  | succ k ih =>
+    -- Inductive case: n = k + 1  
+    -- Goal: (iterateStrategy f strategy (k + 2)).isTerminal = true
+    -- Given: (iterateStrategy (f.applyOp op) strategy (k + 1)).isTerminal = true
+    
+    -- Use our shift equality lemma!
+    -- We know: iterateStrategy f strategy (k + 2) = iterateStrategy (f.applyOp op) strategy (k + 1)
+    rw [iterateStrategy_shift_equality f strategy op h_op_applicable (k + 1) h_strat]
+    -- Now the goal becomes: (iterateStrategy (f.applyOp op) strategy (k + 1)).isTerminal = true
+    -- This is exactly our hypothesis!
+    exact h_terminal
 
 /-- 
 Monotonicity of iteration: if a formula terminates in m steps, it also terminates in k steps for any k ≥ m.
@@ -191,10 +250,42 @@ lemma iterateStrategy_monotonic {Var : Type} [DecidableEq Var]
     (h_le : m ≤ k) 
     (h_term : (iterateStrategy f strategy m).isTerminal = true) : 
     (iterateStrategy f strategy k).isTerminal = true := by
-  -- The intuitive idea: once a formula becomes terminal, it stays terminal
-  -- The detailed proof requires induction on iteration difference and well-formedness reasoning
-  -- For now, we'll assert this fundamental property
-  sorry -- TODO: Complete detailed induction proof for monotonicity
+  -- Express k = m + d and induct on d
+  obtain ⟨d, rfl⟩ := Nat.exists_eq_add_of_le h_le
+  
+  -- Induction on d
+  induction d with
+  | zero => 
+    -- Base case: k = m + 0 = m
+    simp
+    exact h_term
+    
+  | succ d ih =>
+    -- Inductive step: k = m + (d + 1) = (m + d) + 1
+    -- IH: (iterateStrategy f strategy (m + d)).isTerminal = true
+    -- Goal: (iterateStrategy f strategy (m + d + 1)).isTerminal = true
+    
+    -- Let g = iterateStrategy f strategy (m + d)
+    let g := iterateStrategy f strategy (m + d)
+    have h_g_terminal : g.isTerminal = true := by
+      apply ih
+      simp [Nat.le_add_right]
+    
+    -- Goal: (iterateStrategy f strategy (m + d + 1)).isTerminal = true
+    -- By definition: this is (iterateStrategy f strategy ((m + d) + 1))
+    simp [Nat.add_assoc] at *
+    simp [iterateStrategy]
+    
+    -- Since g is terminal and strategy is well-formed, strategy g returns Terminal
+    have h_strat_terminal : ∃ h, strategy g = .Terminal h := by
+      exact (h_wf g).1 h_g_terminal
+    
+    -- Extract the witness and apply
+    obtain ⟨h_proof, h_eq_strat⟩ := h_strat_terminal
+    rw [h_eq_strat]
+    
+    -- Goal becomes: g.isTerminal = true
+    exact h_g_terminal
 
 -- Universal theorem: every well-formed strategy terminates within literal count bound
 -- This version avoids the complex shift property by using bounded iteration
