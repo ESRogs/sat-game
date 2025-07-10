@@ -180,7 +180,7 @@ theorem List.sum_map_eraseIdx_le {α : Type} (l : List α) (f : α → Nat) (ind
 theorem List.sum_pos (l : List Nat) (h : ∃ x ∈ l, x > 0) : l.sum > 0 := by
   -- Use list induction on the structure
   induction l with
-  | nil => 
+  | nil =>
     -- Impossible case: x cannot be in empty list
     let ⟨x, h_mem, h_pos⟩ := h
     simp at h_mem
