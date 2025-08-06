@@ -212,12 +212,6 @@ def iterateStrategy {Var : Type} [DecidableEq Var]
     match strategy f with
     | .Terminal _ => f
     | .Continue op _ => f.applyOp op
--- TODO: Prove that nonterminal formulas always have applicable operations
--- theorem nonterminal_has_applicable_operation {Var : Type} [DecidableEq Var]
---     (formula : Formula Var) (h_nt : formula.isNonterminal = true) :
---     ∃ op : FormulaOp Var, op.IsApplicable formula
-
--- With the new StrategyResult approach, the shift property becomes much simpler!
 
 -- Key observation: One step of iteration equals the strategy result
 lemma iterateStrategy_one_step {Var : Type} [DecidableEq Var]
@@ -261,8 +255,6 @@ lemma iterateStrategy_shift_equality {Var : Type} [DecidableEq Var]
     -- After unfolding, both sides should be identical
     rw [ih]
 
--- Note: We're removing the complex shift lemma and using bounded iteration instead
--- This eliminates the dependent type issues we were struggling with
 
 /--
 **Core Iteration Shift Lemma**: The mathematical heart of the termination proof.
@@ -371,17 +363,12 @@ theorem every_valid_strategy_terminates_quickly {Var : Type} [DecidableEq Var] :
     ∀ (formula : Formula Var) (strategy : Strategy Var),
     WellFormedStrategy strategy →
     (iterateStrategy formula strategy formula.countLiterals).isTerminal = true := by
-  -- RESTRUCTURED APPROACH: Use well-founded induction on formulas
   intro formula
-  -- Apply well-founded induction on the literal count ordering
   apply HasLowerLiteralCount_wellFounded.induction formula
   intro f ih strategy h_wf
-  -- ih gives us: ∀ g with fewer literals than f, the property holds for g
 
-  -- First check if f has 0 literals (base case)
   by_cases h_zero : f.countLiterals = 0
-  · -- Case: f has 0 literals
-    -- A formula with 0 literals must be terminal
+  · -- Base case: 0 literals implies terminal
     -- The key insight: use an existing helper theorem
     have h_terminal : f.isTerminal = true := by
       -- If countLiterals = 0, then either f = [] or f has clauses with total length 0
@@ -415,27 +402,20 @@ theorem every_valid_strategy_terminates_quickly {Var : Type} [DecidableEq Var] :
         left  -- Choose the first option: head.isEmpty = true
         exact h_clause_empty
 
-    -- Now show the main goal: (iterateStrategy f strategy f.countLiterals).isTerminal = true
-    rw [h_zero]  -- This rewrites f.countLiterals to 0
-    simp [iterateStrategy]  -- iterateStrategy f strategy 0 = f
+    rw [h_zero]
+    simp [iterateStrategy]
     exact h_terminal
 
-  · -- Case: f has > 0 literals
-    -- We need to show: (iterateStrategy f strategy f.countLiterals).isTerminal = true
-    -- Strategy: check what the strategy says about f
+  · -- Inductive case: f has > 0 literals
     match h_strat : strategy f with
     | .Terminal h_f_terminal =>
-      -- Strategy says f is terminal
-      -- Then iterateStrategy will detect this and stop at any step
-      -- We need a lemma: if formula is terminal, iterateStrategy preserves it
+      -- If f is terminal, iteration preserves it
       have h_iterate_preserves : ∀ n, (iterateStrategy f strategy n).isTerminal = true := by
         intro n
         induction n with
         | zero => simp [iterateStrategy]; exact h_f_terminal
         | succ k ih_k =>
           simp [iterateStrategy]
-          -- The match will see that (iterateStrategy f strategy k) is terminal
-          -- So it returns the terminal formula unchanged
           have h_k_terminal : (iterateStrategy f strategy k).isTerminal = true := ih_k
           -- When a formula is terminal, strategy should return Terminal (by well-formedness)
           have ⟨h_proof, h_eq⟩ := (h_wf (iterateStrategy f strategy k)).1 h_k_terminal
@@ -471,17 +451,10 @@ theorem every_valid_strategy_terminates_quickly {Var : Type} [DecidableEq Var] :
       have ih_result := ih (f.applyOp op) h_wf_rel strategy h_wf
       -- ih_result : (iterateStrategy (f.applyOp op) strategy (f.applyOp op).countLiterals).isTerminal = true
 
-      -- Now we need to connect this to iterating on f for f.countLiterals steps
-      -- Key insight: f.countLiterals > (f.applyOp op).countLiterals
-      -- So after 1 step on f, we have enough remaining steps
+      -- Since (f.applyOp op).countLiterals < f.countLiterals,
+      -- we have enough steps for termination
 
-      -- We need to show: (iterateStrategy f strategy f.countLiterals).isTerminal = true
-      -- Key insight: after 1 step, we get (f.applyOp op) which needs ≤ (f.applyOp op).countLiterals steps
-      -- Since f.countLiterals > (f.applyOp op).countLiterals, we have enough steps
-
-      -- First, let's understand what happens in the first step
       have h_positive : f.countLiterals > 0 := by
-        -- f has > 0 literals (from h_zero)
         push_neg at h_zero
         exact Nat.pos_of_ne_zero h_zero
 
@@ -864,8 +837,6 @@ noncomputable def any_valid_operation_list_terminates_within_bound {Var : Type} 
         push_neg at h_term_exists
         have h_ops_bound : ops.length ≤ min ops.length formula.countLiterals := by
           rw [Nat.min_eq_left h_short_ops]
-        -- h_term_exists now provides exactly what we need:
-        -- ∀ i ≤ ops.length, ¬(formula.applyOps (ops.take i)).isTerminal = true
         exact TerminationSearchResult.Exhausted ops.length h_ops_bound rfl h_term_exists
     · -- Case: formula.countLiterals < ops.length, so min = formula.countLiterals
       push_neg at h_short_ops
@@ -892,23 +863,18 @@ noncomputable def any_valid_operation_list_terminates_within_bound {Var : Type} 
         -- Then termination is forced at formula.countLiterals
         push_neg at h_early_term
         have h_formula_bound : formula.countLiterals ≤ min ops.length formula.countLiterals := by
-          -- Since formula.countLiterals < ops.length, min = formula.countLiterals
           rw [Nat.min_eq_right (Nat.le_of_lt h_formula_lt)]
         exact TerminationSearchResult.Found formula.countLiterals h_formula_bound (by
-                 -- Since no early termination up to formula.countLiterals,
-                 -- we can apply literal_count_progression
                  have h_literal_decrease : (formula.applyOps (ops.take formula.countLiterals)).countLiterals ≤ formula.countLiterals - formula.countLiterals := by
                    apply literal_count_progression
                    · exact Nat.le_of_lt h_formula_lt
                    · exact h_valid
                    · exact h_early_term
 
-                 -- This gives us literal count = 0
                  have h_zero_literals : (formula.applyOps (ops.take formula.countLiterals)).countLiterals = 0 := by
                    rw [Nat.sub_self] at h_literal_decrease
                    exact Nat.eq_zero_of_le_zero h_literal_decrease
 
-                 -- Apply zero_literals_terminal
                  exact zero_literals_terminal (formula.applyOps (ops.take formula.countLiterals)) h_zero_literals)
 
 
@@ -918,37 +884,18 @@ theorem any_valid_operation_list_terminates_or_exhausts {Var : Type} [DecidableE
     (h_valid : ∀ i (h_bound : i < ops.length), (ops.get ⟨i, h_bound⟩).IsApplicable (formula.applyOps (ops.take i))) :
     (∃ k ≤ ops.length, (formula.applyOps (ops.take k)).isTerminal = true) ∨
     (ops.length ≤ formula.countLiterals ∧ ¬(formula.applyOps ops).isTerminal = true) := by
-  -- This corollary follows from the main theorem through logical case analysis
-  -- The mathematical insight: either early termination or bounded exhaustion
-
-  -- Apply the main theorem to get our fundamental result
   have result := any_valid_operation_list_terminates_within_bound formula ops h_valid
-
-  -- The main theorem now gives us a TerminationSearchResult
-  -- We need to derive our specific disjunctive conclusion
 
   cases result with
   | Found k h_k_bound h_terminal =>
-    -- Case: termination found at position k
-    -- Check if this satisfies the corollary's first disjunct: k ≤ ops.length
     have h_k_le_ops : k ≤ ops.length := Nat.le_trans h_k_bound (Nat.min_le_left _ _)
-    -- We have termination, so we return the first disjunct
     exact Or.inl ⟨k, h_k_le_ops, h_terminal⟩
   | Exhausted k h_k_bound h_eq h_no_term =>
-    -- Case: exhaustion without early termination (k = ops.length)
-    -- We prove the second disjunct: (ops.length ≤ formula.countLiterals ∧ ¬(formula.applyOps ops).isTerminal = true)
-
-    -- First part: ops.length ≤ formula.countLiterals
     have h_length_bound : ops.length ≤ formula.countLiterals := by
       rw [←h_eq]
       exact Nat.le_trans h_k_bound (Nat.min_le_right _ _)
 
-    -- Second part: ¬(formula.applyOps ops).isTerminal = true
     have h_final_nonterm : ¬(formula.applyOps ops).isTerminal = true := by
-      -- From h_no_term: ∀ i ≤ k, ¬(formula.applyOps (ops.take i)).isTerminal = true
-      -- Since k = ops.length, we have ∀ i ≤ ops.length, ¬(formula.applyOps (ops.take i)).isTerminal = true
-      -- In particular, for i = ops.length: ¬(formula.applyOps (ops.take ops.length)).isTerminal = true
-      -- Since ops.take ops.length = ops, this gives us ¬(formula.applyOps ops).isTerminal = true
       have h_at_length : ¬(formula.applyOps (ops.take ops.length)).isTerminal = true := by
         apply h_no_term
         rw [h_eq]
